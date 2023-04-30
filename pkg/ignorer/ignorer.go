@@ -19,7 +19,6 @@ func (i *Ignorer) ResolveIgnores(item *list.Item, readme string) {
         item.Ignore = true
         item.IgnoreReason = "non latin description"
     }
-    return
 }
 
 func nonLatinPercentage(s string) float64 {
@@ -31,7 +30,7 @@ func nonLatinPercentage(s string) float64 {
     for _, r := range s {
         if unicode.IsLetter(r) {
             totalChars++
-            if unicode.In(r, unicode.Latin) == false {
+            if !unicode.In(r, unicode.Latin) {
                 nonLatinCount++
             }
         }
