@@ -7,17 +7,22 @@ import (
     "strings"
 )
 
+const (
+    ConfigFilename   = "config.yaml"
+    DataFilename     = ".data.yaml"
+    TempDataFilename = ".data.tmp.yaml"
+    ReadmeFilename   = "README.md"
+)
+
 type Config struct {
-    Title        string
-    Query        string
-    DataPath     string `yaml:"data_path"`
-    TempDataPath string `yaml:"temp_data_path"`
-    ReadmePath   string `yaml:"readme_path"`
-    Root         *CategoryDescription
+    Title   string
+    Query   string
+    Root    *CategoryDescription
+    workDir string
 }
 
-func NewFromFile(filename string) (*Config, error) {
-    bt, err := os.ReadFile(filename)
+func NewFromDir(dir string) (*Config, error) {
+    bt, err := os.ReadFile(dir + "/" + ConfigFilename)
     if err != nil {
         return nil, fmt.Errorf("failed to load config: %w", err)
     }
@@ -26,7 +31,32 @@ func NewFromFile(filename string) (*Config, error) {
     if err != nil {
         return nil, fmt.Errorf("failed to unmarshal config: %w", err)
     }
+    cfg.workDir = dir
     return &cfg, nil
+}
+
+func (c *Config) Save() error {
+    bt, err := yaml.Marshal(c)
+    if err != nil {
+        return fmt.Errorf("failed to marshal config: %w", err)
+    }
+    err = os.WriteFile(c.workDir+"/"+ConfigFilename, bt, 0644)
+    if err != nil {
+        return fmt.Errorf("failed to save config: %w", err)
+    }
+    return nil
+}
+
+func (c *Config) DataPath() string {
+    return c.workDir + "/" + DataFilename
+}
+
+func (c *Config) TempDataPath() string {
+    return c.workDir + "/" + TempDataFilename
+}
+
+func (c *Config) ReadmePath() string {
+    return c.workDir + "/" + ReadmeFilename
 }
 
 type CategoryDescription struct {

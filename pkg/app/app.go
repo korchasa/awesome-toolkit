@@ -35,12 +35,12 @@ func MustBuildApp(ghToken string, aiToken string, cfg *config.Config) *App {
 }
 
 func mustLoadTempData(cfg *config.Config) *list.List {
-    tempData, err := list.NewFromFile(cfg.TempDataPath)
+    tempData, err := list.NewFromFile(cfg.TempDataPath())
     if os.IsNotExist(err) {
-        log.Infof("temp data file `%s` not found, creating new one", cfg.TempDataPath)
-        oldData, err := list.NewFromFile(cfg.DataPath)
+        log.Infof("temp data file `%s` not found, creating new one", cfg.TempDataPath())
+        oldData, err := list.NewFromFile(cfg.DataPath())
         if os.IsNotExist(err) {
-            log.Infof("data file `%s` not found, creating new one", cfg.DataPath)
+            log.Infof("data file `%s` not found, creating new one", cfg.DataPath())
             oldData = list.NewEmpty(cfg.Title)
         } else if err != nil {
             log.Fatalf("failed to load old data: %s", err)
@@ -68,20 +68,23 @@ func (s *App) Run(ctx context.Context) error {
             break
         }
         s.tempData.Add(item)
-        if err := s.tempData.Save(s.cfg.TempDataPath); err != nil {
+        if err := s.tempData.Save(s.cfg.TempDataPath()); err != nil {
             return fmt.Errorf("failed to save temp data: %w", err)
         }
     }
     if s.confirmDataReplacement() {
-        log.Infof("saving data to `%s`", s.cfg.DataPath)
+        log.Infof("saving data to `%s`", s.cfg.DataPath())
         s.tempData.UpdatedAt = time.Now()
-        err = s.tempData.Save(s.cfg.DataPath)
+        err = s.tempData.Save(s.cfg.DataPath())
         if err != nil {
             return fmt.Errorf("failed to save data: %w", err)
         }
+        if err := os.Remove(s.cfg.TempDataPath()); err != nil {
+            return fmt.Errorf("failed to remove temp data: %w", err)
+        }
     }
     if s.confirmGenerateReadme() {
-        oldData, err := list.NewFromFile(s.cfg.DataPath)
+        oldData, err := list.NewFromFile(s.cfg.DataPath())
         if err != nil {
             log.Fatalf("failed to load old data: %s", err)
         }
@@ -89,12 +92,12 @@ func (s *App) Run(ctx context.Context) error {
         if err != nil {
             log.Fatalf("failed to generate readme: %s", err)
         }
-        err = os.WriteFile(s.cfg.ReadmePath, []byte(readme), 0644)
+        err = os.WriteFile(s.cfg.ReadmePath(), []byte(readme), 0644)
         if err != nil {
             log.Fatalf("failed to write readme: %s", err)
         }
         oldData.ReadmeGeneratedAt = time.Now()
-        err = oldData.Save(s.cfg.DataPath)
+        err = oldData.Save(s.cfg.DataPath())
         if err != nil {
             return fmt.Errorf("failed to save data: %w", err)
         }

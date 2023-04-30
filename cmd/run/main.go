@@ -23,7 +23,7 @@ func init() {
 func main() {
     ctx := context.Background()
 
-    cfg, err := config.NewFromFile(os.Args[1])
+    cfg, err := config.NewFromDir(os.Args[1])
     if err != nil {
         log.Fatalf("failed to load config: %s", err)
     }
