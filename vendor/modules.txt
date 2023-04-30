@@ -1,3 +1,8 @@
+# github.com/AlecAivazis/survey/v2 v2.3.6
+## explicit; go 1.13
+github.com/AlecAivazis/survey/v2
+github.com/AlecAivazis/survey/v2/core
+github.com/AlecAivazis/survey/v2/terminal
 # github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8
 ## explicit; go 1.13
 github.com/ProtonMail/go-crypto/bitcurves
@@ -41,6 +46,18 @@ github.com/google/go-github/v52/github
 # github.com/google/go-querystring v1.1.0
 ## explicit; go 1.10
 github.com/google/go-querystring/query
+# github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
+## explicit
+github.com/kballard/go-shellquote
+# github.com/mattn/go-colorable v0.1.2
+## explicit
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.17
+## explicit; go 1.15
+github.com/mattn/go-isatty
+# github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
+## explicit
+github.com/mgutz/ansi
 # github.com/sashabaranov/go-openai v1.9.0
 ## explicit; go 1.18
 github.com/sashabaranov/go-openai
@@ -63,8 +80,16 @@ golang.org/x/oauth2/internal
 ## explicit; go 1.17
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
+# golang.org/x/term v0.7.0
+## explicit; go 1.17
+golang.org/x/term
+# golang.org/x/text v0.9.0
+## explicit; go 1.17
+golang.org/x/text/transform
+golang.org/x/text/width
 # google.golang.org/appengine v1.6.7
 ## explicit; go 1.11
 google.golang.org/appengine/internal
