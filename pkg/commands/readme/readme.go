@@ -27,7 +27,7 @@ func mustLoadData(cfg *config.Config) *list.List {
     data, err := list.NewFromFile(cfg.DataPath())
     if os.IsNotExist(err) {
         log.Infof("data file `%s` not found, creating new one", cfg.DataPath())
-        data = list.NewEmpty(cfg.Title)
+        data = list.NewEmpty()
     } else if err != nil {
         log.Fatalf("failed to load data: %s", err)
     }

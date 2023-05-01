@@ -8,14 +8,14 @@ import (
 )
 
 const (
-    ConfigFilename   = "config.yaml"
-    DataFilename     = ".data.yaml"
-    TempDataFilename = ".data.tmp.yaml"
-    ReadmeFilename   = "README.md"
+    ConfigFilename         = "config.yaml"
+    DataFilename           = ".data.yaml"
+    TempDataFilename       = ".data.tmp.yaml"
+    ReadmeTemplateFilename = ".readme.tmpl"
+    ReadmeFilename         = "README.md"
 )
 
 type Config struct {
-    Title   string
     Query   string
     Root    *CategoryDescription
     workDir string
@@ -57,6 +57,10 @@ func (c *Config) TempDataPath() string {
 
 func (c *Config) ReadmePath() string {
     return c.workDir + "/" + ReadmeFilename
+}
+
+func (c *Config) ReadmeTemplatePath() string {
+    return c.workDir + "/" + ReadmeTemplateFilename
 }
 
 type CategoryDescription struct {

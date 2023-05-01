@@ -8,30 +8,33 @@ import (
     "github.com/korchasa/awesome-toolkit/pkg/config"
     "github.com/korchasa/awesome-toolkit/pkg/list"
     "github.com/korchasa/awesome-toolkit/pkg/repo_classifier"
+    "github.com/sashabaranov/go-openai"
     log "github.com/sirupsen/logrus"
     "os"
     "time"
 )
 
 type App struct {
-    classifier *repo_classifier.RepoClassifier
-    cfg        *config.Config
-    data       *list.List
+    classifier   *repo_classifier.RepoClassifier
+    categoryTree *config.CategoryDescription
+    data         *list.List
+    dataPath     string
 }
 
-func MustBuildApp(aiToken string, cfg *config.Config) *App {
+func MustBuildApp(ai *openai.Client, cfg *config.Config) *App {
     return &App{
-        classifier: repo_classifier.NewRepoClassifier(aiToken, cfg),
-        cfg:        cfg,
-        data:       mustLoadData(cfg),
+        classifier:   repo_classifier.NewRepoClassifier(ai, cfg.Root),
+        categoryTree: cfg.Root,
+        data:         mustLoadData(cfg.DataPath()),
+        dataPath:     cfg.DataPath(),
     }
 }
 
-func mustLoadData(cfg *config.Config) *list.List {
-    data, err := list.NewFromFile(cfg.DataPath())
+func mustLoadData(path string) *list.List {
+    data, err := list.NewFromFile(path)
     if os.IsNotExist(err) {
-        log.Infof("data file `%s` not found, creating new one", cfg.DataPath())
-        data = list.NewEmpty(cfg.Title)
+        log.Infof("data file `%s` not found, creating new one", path)
+        data = list.NewEmpty()
     } else if err != nil {
         log.Fatalf("failed to load data: %s", err)
     }
@@ -46,7 +49,7 @@ func (s *App) Run(_ context.Context) error {
         }
 
         s.data.Add(item)
-        err = s.data.Save(s.cfg.DataPath())
+        err = s.data.Save(s.dataPath)
         if err != nil {
             return fmt.Errorf("failed to save data: %w", err)
         }
@@ -90,15 +93,14 @@ func (s *App) askForItem() (*list.Item, error) {
             Validate: survey.Required,
         },
         {
-            Name:     "Description",
-            Prompt:   &survey.Multiline{Message: "Enter the description:"},
-            Validate: survey.Required,
+            Name:   "Description",
+            Prompt: &survey.Multiline{Message: "Enter the description:"},
         },
         {
             Name: "Category",
             Prompt: &survey.Select{
                 Message:  "Enter the category:",
-                Options:  s.cfg.Root.TitlesTree(0),
+                Options:  s.categoryTree.TitlesTree(0),
                 PageSize: 30,
             },
             Validate: survey.Required,
@@ -110,6 +112,7 @@ func (s *App) askForItem() (*list.Item, error) {
             os.Exit(0)
         }
     }
+    item.Category = s.categoryTree.FindByTree(item.Category)
 
     return &item, nil
 }
