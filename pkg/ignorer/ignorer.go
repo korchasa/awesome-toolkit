@@ -24,9 +24,9 @@ func (i *Ignorer) ResolveIgnores(item *list.Item, readme string) {
 	}
 	p := nonLatinPercentage(text)
 	if p > maxNonLatinSymbolsPercent {
-		log.Infof("non latin description of %s (%f)", item.Link, p)
+		log.Infof("not-english `%s` (%f)", item.Link, p)
 		item.Ignore = true
-		item.IgnoreReason = "non latin description"
+		item.IgnoreReason = "not-english"
 	}
 }
 

@@ -31,8 +31,8 @@ func NewRepoClassifier(openAIToken string, cfg *config.Config) *RepoClassifier {
 func (r *RepoClassifier) ClassifyRepo(ctx context.Context, item *list.Item, readmeContent string) error {
 	req := r.requestTemplate
 	txt := fmt.Sprintf(
-		"%s %s\n\n%s\n\n%s",
-		item.Name, item.Link, item.Description, limitString(readmeContent, readmeLimit),
+		"Name:%s\nLink:%s\nLanguage:%s\n%s\n\n%s",
+		item.Name, item.Link, item.Language, item.Description, limitString(readmeContent, readmeLimit),
 	)
 	req.Messages = append(req.Messages, openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleUser,
