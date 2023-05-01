@@ -51,7 +51,7 @@ func (l *List) Save(filename string) error {
 
 func (l *List) ItemExists(item *Item) bool {
     for _, i := range l.Items {
-        if i.Name == item.Name {
+        if i.Link == item.Link {
             return true
         }
     }
