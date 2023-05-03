@@ -81,7 +81,7 @@ I want you to act as a it specialist. I will give you a information about the gi
     },
     "info": {
       "type": "string",
-      "description": "Repository information in one paragraph"
+      "description": "Repository description in one paragraph, translated to English"
     }
   },
   "required": [

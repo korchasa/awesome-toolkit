@@ -49,7 +49,7 @@ func genSublistTOC(category *config.CategoryDescription, l *list.List, i int) st
         "%s- [%s](#%s)\n",
         strings.Repeat("  ", i),
         category.Title,
-        category.Title)
+        anchorFor(category.Title))
     for _, sc := range category.Categories {
         content += genSublistTOC(sc, l, i+1)
     }
@@ -62,11 +62,36 @@ func genSublist(cat *config.CategoryDescription, list *list.List, intend int) st
         if item.Ignore || item.Category != cat.Title {
             continue
         }
-        content += fmt.Sprintf("- [%s](%s) - %s\n", item.Name, item.Link, item.Description)
+        desc := genDesc(item)
+        if desc == "" {
+            content += fmt.Sprintf("- [%s](%s)\n", item.Name, item.Link)
+        } else {
+            content += fmt.Sprintf("- [%s](%s) - %s\n", item.Name, item.Link, desc)
+        }
     }
     content += "\n"
     for _, sc := range cat.Categories {
         content += genSublist(sc, list, intend+1)
     }
     return content
+}
+
+func genDesc(item *list.Item) string {
+    desc := item.Description
+    if item.AIDescription != "" {
+        desc = item.AIDescription
+    }
+    return replaceMarkdownSymbols(desc)
+}
+
+func anchorFor(s string) string {
+    s = strings.ToLower(s)
+    s = strings.ReplaceAll(s, "/", "")
+    s = strings.ReplaceAll(s, " ", "-")
+    return s
+}
+
+func replaceMarkdownSymbols(s string) string {
+    s = strings.ReplaceAll(s, "|", ", ")
+    return s
 }
