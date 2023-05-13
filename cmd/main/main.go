@@ -12,6 +12,7 @@ import (
     "github.com/sashabaranov/go-openai"
     log "github.com/sirupsen/logrus"
     "os"
+    "strings"
 )
 
 const (
@@ -42,8 +43,11 @@ func main() {
 
     ctx := context.Background()
 
+    commands := []string{
+        CommandAdd, CommandCollect, CommandReadme, CommandClean,
+    }
     if len(os.Args) < 3 {
-        log.Fatalf("Usage: %s <work dir> <command>", os.Args[0])
+        log.Fatalf("Usage: %s <work dir> <%s>", os.Args[0], strings.Join(commands, "|"))
     }
 
     cfg, err := config.NewFromDir(os.Args[1])
